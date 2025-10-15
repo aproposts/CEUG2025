@@ -1,0 +1,219 @@
+---
+notebook: {"kernelInfo":{"defaultKernelName":"csharp","items":[{"name":"csharp","languageName":"C#"},{"name":"fsharp","languageName":"F#"},{"name":"html","languageName":"HTML"},{"name":"javascript","languageName":"JavaScript"},{"name":"pwsh","languageName":"PowerShell"},{"name":"python","languageName":"Python"},{"name":"sql","languageName":"SQL"},{"name":"http","languageName":"HTTP"},{"name":"mermaid","languageName":"Mermaid"},{"name":"value"}]}}
+---
+# PolyglotNotebook Sample
+
+This is a sample polyglot notebook demonstrating various cell types and languages supported by the PolyglotNotebook module.
+
+## Overview
+
+This notebook contains examples of:
+- **Markdown cells** for documentation
+- **C# code cells** for .NET development
+- **F# code cells** for functional programming
+- **PowerShell cells** for system administration
+- **SQL cells** for database queries
+- **JavaScript cells** for web development
+- **Python cells** for data science
+- **HTML cells** for markup
+- **Magic commands** for notebook operations
+
+```csharp
+// C# Example - Basic console application
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+Console.WriteLine("Hello from C#!");
+
+// Create a simple data structure
+var numbers = new List<int> { 1, 2, 3, 4, 5 };
+var evenNumbers = numbers.Where(n => n % 2 == 0).ToList();
+
+Console.WriteLine($"Even numbers: {string.Join(", ", evenNumbers)}");
+
+// Simple class definition
+public class Person
+{
+    public string Name { get; set; }
+    public int Age { get; set; }
+    
+    public override string ToString() => $"{Name} ({Age} years old)";
+}
+
+var person = new Person { Name = "Alice", Age = 30 };
+Console.WriteLine($"Person: {person}");
+```
+
+```fsharp
+// F# Example - Functional programming
+printfn "Hello from F#!"
+
+// List processing with functional style
+let numbers = [1; 2; 3; 4; 5; 6; 7; 8; 9; 10]
+let evenNumbers = numbers |> List.filter (fun x -> x % 2 = 0)
+let sumOfEvens = evenNumbers |> List.sum
+
+printfn "Numbers: %A" numbers
+printfn "Even numbers: %A" evenNumbers
+printfn "Sum of even numbers: %d" sumOfEvens
+
+// Pattern matching example
+let describe x =
+    match x with
+    | 0 -> "zero"
+    | 1 -> "one" 
+    | 2 -> "two"
+    | n when n > 0 -> "positive"
+    | _ -> "negative"
+
+[0; 1; 2; 5; -3] |> List.iter (fun x -> printfn "%d is %s" x (describe x))
+```
+
+```powershell
+# PowerShell Example - System administration
+Write-Host "Hello from PowerShell!" -ForegroundColor Green
+
+# Get system information
+Write-Host "System Information:" -ForegroundColor Yellow
+Get-Date | Format-List
+$PSVersionTable | Format-List
+
+# Process information
+Write-Host "Top 5 processes by CPU usage:" -ForegroundColor Yellow
+Get-Process | Sort-Object CPU -Descending | Select-Object -First 5 Name, CPU | Format-Table
+```
+
+```sql
+-- SQL Example - Database queries
+SELECT 
+    'Sample Database' AS DatabaseName,
+    GETDATE() AS CurrentDateTime,
+    USER_NAME() AS CurrentUser;
+
+-- Common table expression example
+WITH NumberSeries AS (
+    SELECT 1 AS Number
+    UNION ALL
+    SELECT Number + 1 FROM NumberSeries WHERE Number < 10
+)
+SELECT 
+    Number,
+    Number * Number AS Square,
+    CASE 
+        WHEN Number % 2 = 0 THEN 'Even'
+        ELSE 'Odd'
+    END AS EvenOdd
+FROM NumberSeries;
+```
+
+```javascript
+// JavaScript Example - Web development
+console.log("Hello from JavaScript!");
+
+// Array operations
+const numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+const evenNumbers = numbers.filter(n => n % 2 === 0);
+const squaredEvens = evenNumbers.map(n => n * n);
+
+console.log("Numbers:", numbers);
+console.log("Even numbers:", evenNumbers);
+console.log("Squared even numbers:", squaredEvens);
+
+// Object manipulation
+const person = {
+    name: "Bob",
+    age: 25,
+    hobbies: ["reading", "coding", "gaming"]
+};
+
+console.log("Person:", person);
+console.log(`${person.name} is ${person.age} years old.`);
+```
+
+```python
+# Python Example - Data science
+import math
+import datetime
+
+print("Hello from Python!")
+
+# List comprehensions
+numbers = list(range(1, 11))
+even_numbers = [n for n in numbers if n % 2 == 0]
+squared_evens = [n**2 for n in even_numbers]
+
+print(f"Numbers: {numbers}")
+print(f"Even numbers: {even_numbers}")
+print(f"Squared even numbers: {squared_evens}")
+
+# Dictionary operations
+person = {
+    "name": "Charlie",
+    "age": 35,
+    "skills": ["Python", "Data Analysis", "Machine Learning"]
+}
+
+print(f"Person: {person}")
+print(f"{person['name']} is {person['age']} years old.")
+```
+
+```html
+<!-- HTML Example - Markup -->
+<div style="border: 2px solid #007acc; padding: 20px; border-radius: 8px;">
+    <h2 style="color: #007acc; margin-top: 0;">HTML Example</h2>
+    <p>This is an <strong>HTML cell</strong> demonstrating markup capabilities.</p>
+    
+    <h3>Features:</h3>
+    <ul>
+        <li>Rich text formatting</li>
+        <li>Lists and tables</li>
+        <li>Links and images</li>
+        <li>Custom styling</li>
+    </ul>
+    
+    <h3>Sample Table:</h3>
+    <table border="1" style="border-collapse: collapse; width: 100%;">
+        <tr style="background-color: #007acc;">
+            <th>Language</th>
+            <th>Type</th>
+            <th>Use Case</th>
+        </tr>
+        <tr>
+            <td>C#</td>
+            <td>Compiled</td>
+            <td>Enterprise applications</td>
+        </tr>
+        <tr>
+            <td>F#</td>
+            <td>Functional</td>
+            <td>Data processing</td>
+        </tr>
+        <tr>
+            <td>JavaScript</td>
+            <td>Interpreted</td>
+            <td>Web development</td>
+        </tr>
+    </table>
+</div>
+```
+
+## Testing Magic Commands
+
+The following cells demonstrate magic commands:
+
+```text
+Magic Command: #!about
+
+```
+
+```text
+Magic Command: #!lsmagic
+
+```
+
+## Summary
+
+This sample notebook demonstrates the versatility of polyglot notebooks with multiple programming languages, rich documentation, and magic commands.
+
+The PolyglotNotebook module can parse all these different cell types and convert them to clean Markdown format.

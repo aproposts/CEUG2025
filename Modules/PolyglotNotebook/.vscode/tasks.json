@@ -1,0 +1,100 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Import Module",
+            "type": "shell",
+            "command": "pwsh",
+            "args": [
+                "-Command",
+                "Import-Module .\\PolyglotNotebook.psd1 -Force; Write-Host 'Module imported successfully!' -ForegroundColor Green"
+            ],
+            "group": "build",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": true,
+                "clear": false
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Run Tests",
+            "type": "shell",
+            "command": "pwsh",
+            "args": [
+                "-Command",
+                "if (Get-Module Pester) { Write-Host 'Pester already loaded' } else { Import-Module Pester -Force }; Invoke-Pester .\\Tests\\ -Verbose"
+            ],
+            "group": "test",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": true,
+                "clear": false
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Convert Sample DIB",
+            "type": "shell",
+            "command": "pwsh",
+            "args": [
+                "-Command",
+                "Import-Module .\\PolyglotNotebook.psd1 -Force; $markdown = Import-PolyglotNotebook -Path '.\\Examples\\sample.dib'; Write-Host 'Conversion completed!' -ForegroundColor Green; $markdown"
+            ],
+            "group": "build",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": true,
+                "clear": false
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Create Sample Markdown",
+            "type": "shell",
+            "command": "pwsh",
+            "args": [
+                "-Command",
+                "Import-Module .\\PolyglotNotebook.psd1 -Force; Import-PolyglotNotebook -Path '.\\Examples\\sample.dib' | ConvertTo-MarkdownFile -OutputPath '.\\Examples\\sample.md' -Force; Write-Host 'Sample markdown file created!' -ForegroundColor Green"
+            ],
+            "group": "build",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": true,
+                "clear": false
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Install Pester (if needed)",
+            "type": "shell",
+            "command": "pwsh",
+            "args": [
+                "-Command",
+                "if (!(Get-Module -ListAvailable -Name Pester)) { Install-Module -Name Pester -Force -SkipPublisherCheck; Write-Host 'Pester installed!' -ForegroundColor Green } else { Write-Host 'Pester is already installed' -ForegroundColor Yellow }"
+            ],
+            "group": "build",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": true,
+                "clear": false
+            },
+            "problemMatcher": []
+        }
+    ]
+}

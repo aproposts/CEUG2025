@@ -1,0 +1,304 @@
+#!meta
+
+{"kernelInfo":{"defaultKernelName":"csharp","items":[{"name":"csharp","languageName":"C#","aliases":["c#","cs"]},{"name":"fsharp","languageName":"F#","aliases":["f#","fs"]},{"name":"html","languageName":"HTML"},{"name":"http","languageName":"HTTP"},{"name":"javascript","languageName":"JavaScript","aliases":["js"]},{"name":"mermaid","languageName":"Mermaid"},{"name":"pwsh","languageName":"pwsh"},{"name":"value"}]}}
+
+#!markdown
+
+## Overview
+
+- Brief background on OCAD University, me, and PowerShell
+- Gotchas in the new ASP .NET build system
+- ColleagueWebApi warm-up woes and site management
+- Looking forward:
+  - Polyglot Notebooks for operations
+  - Agentic AI for building tools
+- Q&A/Discussion?
+
+#!markdown
+
+## [OCAD University](https://ocadu.ca)
+
+<div class='columns'>
+<div class='column'>
+
+### A Small Art & Design University
+
+- Students: ~5200
+- Faculty: ~550
+- Employees: ~1400 (Faculty + FT, PT, Students, etc.)
+
+</div>
+<div class='column'>
+
+### The Colleague Environment
+
+- Went live ~2015
+- SQL Server databases
+- Windows everywhere
+
+</div>
+</div>
+
+#!markdown
+
+## Me
+
+- Computer nerd since the 80s
+- A deep and abiding anti-Microsoft bias
+  - OS/2
+  - Linux
+  - (Free/Open)BSD
+  - GNU Emacs
+- Started at OCAD in 2010 in a development role
+- Now primarily operations, architecture, and security
+
+#!markdown
+
+## PowerShell and I
+
+- Late to the game (2016/2017)
+- Started with rudimentary scripts
+- Read the writing on the wall
+- Started spending as much time as possible in PowerShell
+- An epiphany in old content:
+  [Getting Started with PowerShell 3.0](https://learn.microsoft.com/en-us/shows/getstartedpowershell3/)
+
+#!markdown
+
+## A UNIX Philosophy for the 21st Century
+
+<div class='columns'>
+<div class='column'>
+
+![Saint Jeffrey Snover](images/saint-snover.jpeg)
+
+</div>
+<div class='column'>
+
+- Objects and pipes: A delicious combination!
+- Superior composition, slightly less eccentricity
+- Verbosity as a strength, aiding discoverability
+
+```powershell
+Set-PSReadLineKeyHandler -Key Tab -Function Complete
+```
+
+- A shell and a REPL: Lightweight application programming
+- Don't get me started, we could be here all day
+
+</div>
+</div>
+
+#!markdown
+
+# Building & Deploying ASP .NET (Core) Applications
+
+#!markdown
+
+## Colleague .NET Applications
+
+<div class='columns'>
+<div class='column'>
+
+### .NET Framework (4.x)
+
+- `settings.config` for most/all application settings.
+- Stacked SlowCheetah transforms:\
+  `settings.<build>.config`➡️\
+  `settings.<publish>.config`
+- OCAD used these extensively for per-environment deployments
+- [FatAntelope](https://github.com/CameronWills/FatAntelope) for creating Colleague Self-Service `sitemap.config` build transforms
+  
+</div>
+<div class='column'>
+
+### .NET (Core 5+)
+
+- Application settings spread between `settings.config` and `AppSettings.json`
+- Build configuration transforms only(?)\
+  *Happy to have a MSBuild/SlowCheetah wizard show how it can be done*
+- Runtime transforms available for `AppSettings.json`\
+  *...with caveats!*
+
+</div>
+</div>
+
+#!markdown
+
+## Automated Per-Environment Configuration
+
+- `AppSettings.json`
+  - Include sibling `AppSettings.<environment>.json` files in build and deployment
+  - In the application `.csproj`, set the `IsTransformWebConfigDisabled` property to `false`
+  - In the `.pubxml` publish profile, populate the `EnvironmentName` tag
+  - **Caveat:** Settings specified by runtime transforms cannot be changed through application admin pages!
+- `settings.config`
+  - In the `.pubxml` publish profile, add a build target which uses the `XmlPoke` task to populate the deployment `SetParameters.xml` file with the required values
+
+#!markdown
+
+## `Invoke-Build.ps1`
+
+- Takes a `PublishProfile` and logging parameters.
+- Executes a `dotnet publish` for the hard-coded `.csproj` and specified `.pubxml`
+- No Visual Studio required!
+
+#!markdown
+
+## `Invoke-Deploy.ps1`
+
+- Takes `Build`, `ComputerName`, `Credential`, and logging parameters
+- Sets the deployment `.zip` file permissions to inherit from the folder\
+  *...to allow another user to read/deploy the file*
+- Supports `ShouldProcess`:
+  - When the `-WhatIf` switch is specified, the published `.cmd` file is run with the `/T` switch
+  - By default, the user is prompted to approve the deployment action
+- Stops any running application pools associated with the application
+- Runs the published `.cmd`
+- Starts the previously stopped application pools
+
+#!markdown
+
+# Build and Deploy Demo
+
+#!markdown
+
+# Colleague Site Management
+
+#!markdown
+
+## Colleague `WarmUp.ps1` Woes
+
+<div class='columns'>
+<div class='column'>
+
+### Use Cases
+
+- Automated periodic recycling/warming
+- Ad-hoc on-demand recycling/warming
+
+</div>
+<div class='column'>
+
+### Problems
+
+- Where is the script for which instance?
+- What are the parameters I need to provide?
+- Username and password in the clear!
+
+</div>
+</div>
+
+#!markdown
+
+## `ColleagueSites` PowerShell Module
+
+<div class='columns'>
+<div class='column'>
+
+### Design Goals
+
+- The correct warm-up script and parameters should be addressed through minimal configuration
+- Dual use: Same script for both admins and automation
+- Protect credentials both in execution and on-disk
+
+</div>
+<div class='column'>
+
+### Features
+
+- Command parameterization via a `config.json` file and 'labels'
+- Automagic IIS site, application and `WarmUp.ps1` discovery via URI matching
+- Remote execution via module injection
+- Secure (enough) credential storage via Windows <abbr title="Data Protection API">DPAPI</abbr>
+- Comment-based help generated via Co-Pilot Pro + Claude Sonnet 4
+
+</div>
+</div>
+
+#!markdown
+
+# `ColleagueSites` PowerShell Module Demo
+
+#!markdown
+
+# [Polyglot Notebooks](https://learn.microsoft.com/en-us/training/modules/polyglot-notebooks/) for Operations
+
+#!markdown
+
+## An Old Idea Reborn
+
+<div class='columns'>
+<div class='column'>
+
+![Donald Knuth](images/Donald_Ervin_Knuth_(cropped).jpg)
+
+</div>
+<div class='column'>
+
+- Notebooks are a flavour of [Literate Programming](https://en.wikipedia.org/wiki/Literate_programming):
+  - Prose and code are combined in a source file
+- Antecedents:
+  - [Emacs `org-babel`](https://orgmode.org/worg/org-contrib/babel/intro.html)
+  - [Jupyter Notebooks](https://jupyter.org/)
+
+</div>
+</div>
+
+#!markdown
+
+## PowerShell Notebooks
+
+- Occupy a space between the terminal and a script, code and documentation
+- Good for step-wise procedures which are not easily automated
+- Process documents can be 'made live'
+- Useful when troubleshooting
+
+#!markdown
+
+## The Lazy Shall Inherit the Earth
+
+- Not everybody has, or is willing to install Polyglot tooling
+- It'd be great to generate documentation from Notebooks
+- The native `.dib` format is *very* close to plain markdown
+- My first foray into vibe-coding, the `PolyglotNotebook` PowerShell module:
+  - Imports native `.dib` files to a collection of .NET objects
+  - Optionally converts the objects to markdown strings
+  - Has good documentation and **unit tests** 😲
+
+#!markdown
+
+## Convert the Polyglot Notebook
+
+#!pwsh
+
+Import-Module .\Modules\PolyglotNotebook
+Import-PolyglotNotebook .\Notebook.dib |
+Convert-PolyglotNotebookToMarkdown |
+Set-Content -Path .\README.md
+
+pandoc.exe @(
+    '.\README.md'
+    '--from=markdown'
+    '--to=pptx'
+    '--slide-level=2'
+    '--reference-doc=.\Presentation\custom-reference.pptx'
+    '--metadata-file=.\Presentation\Presentation.yaml'
+    '--variable=monofont=Cascadia Code'
+    '--output=.\Presentation\Presentation.pptx'
+)
+
+#!markdown
+
+## Vibe Check
+
+- Visual Studio Code agentic AI tooling is (very) good
+  - Be mindful of, and utilize the prompt context
+- Don't let the dog walk you:
+  - Sometimes what you've asked for isn't what you want
+- Fluency and debugging skills are required
+- LLMS are great for boilerplate and documentation
+
+#!markdown
+
+# Questions and Discussion
