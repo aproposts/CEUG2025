@@ -230,20 +230,22 @@ Set-PSReadLineKeyHandler -Key Tab -Function Complete
 ## Convert the Polyglot Notebook
 
 ```powershell
-Import-Module .\Modules\PolyglotNotebook
+Import-Module ..\Modules\PolyglotNotebook
 Import-PolyglotNotebook .\Notebook.dib |
 Convert-PolyglotNotebookToMarkdown |
-Set-Content -Path .\README.md
+Set-Content -Path .\Presentation.md
+```
 
+```powershell
 pandoc.exe @(
-    '.\README.md'
+    '.\Presentation.md'
     '--from=markdown'
     '--to=pptx'
     '--slide-level=2'
-    '--reference-doc=.\Presentation\custom-reference.pptx'
-    '--metadata-file=.\Presentation\Presentation.yaml'
+    '--reference-doc=.\custom-reference.pptx'
+    '--metadata-file=.\Presentation.yaml'
     '--variable=monofont=Cascadia Code'
-    '--output=.\Presentation\Presentation.pptx'
+    '--output=.\Presentation.pptx'
 )
 ```
 
